@@ -95,7 +95,7 @@ src_prepare() {
 	use sidebar && epatch "${PATCHDIR}"/sidebar.patch
 
 	# fixing http://dev.mutt.org/trac/ticket/3288
-	use imap && epatch "${PATCHDIR}"/537694-segv-imap-headers.patch
+	use imap && epatch "${DISTDIR}"/537694-segv-imap-headers.patch
 
 	# patch version string for bug reports
 	sed -i -e 's/"Mutt %s (%s)"/"Mutt %s (%s, Gentoo '"${PVR}"')"/' \
