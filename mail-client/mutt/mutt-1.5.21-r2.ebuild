@@ -8,12 +8,13 @@ inherit eutils flag-o-matic autotools
 
 PATCHSET_REV="-r1"
 
+IMAP_PATCH="537694-segv-imap-headers.patch"
 DESCRIPTION="A small but very powerful text-based mail client"
 HOMEPAGE="http://www.mutt.org"
 SRC_URI="ftp://ftp.mutt.org/mutt/devel/${P}.tar.gz
 	mirror://gentoo/${P}-gentoo-patches${PATCHSET_REV}.tar.bz2
 	http://dev.gentoo.org/~grobian/distfiles/${P}-gentoo-patches${PATCHSET_REV}.tar.bz2
-	imap? ( http://dev.mutt.org/trac/raw-attachment/ticket/3288/537694-segv-imap-headers.patch )"
+	imap? ( http://dev.mutt.org/trac/raw-attachment/ticket/3288/${IMAP_PATCH} )"
 IUSE="berkdb crypt debug doc gdbm gnutls gpg idn imap mbox nls nntp pop qdbm sasl sidebar smime smtp ssl tokyocabinet"
 SLOT="0"
 LICENSE="GPL-2"
@@ -95,7 +96,7 @@ src_prepare() {
 	use sidebar && epatch "${PATCHDIR}"/sidebar.patch
 
 	# fixing http://dev.mutt.org/trac/ticket/3288
-	use imap && epatch "${DISTDIR}"/537694-segv-imap-headers.patch
+	use imap && epatch "${DISTDIR}"/${IMAP_PATCH}
 
 	# patch version string for bug reports
 	sed -i -e 's/"Mutt %s (%s)"/"Mutt %s (%s, Gentoo '"${PVR}"')"/' \
