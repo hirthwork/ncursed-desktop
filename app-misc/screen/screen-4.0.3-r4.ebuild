@@ -12,12 +12,12 @@ VSPLIT="wrp_vertical_split_0.3_4.0.2.diff.bz2"
 DESCRIPTION="Full-screen window manager that multiplexes physical terminals between several processes"
 HOMEPAGE="http://www.gnu.org/software/screen/"
 SRC_URI="ftp://ftp.uni-erlangen.de/pub/utilities/${PN}/${P}.tar.gz
-	http://vsp4sdl.yuggoth.org/${VSPLIT}"
+	vsplit? ( http://vsp4sdl.yuggoth.org/${VSPLIT} )"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~sparc-fbsd ~x86-fbsd ~hppa-hpux ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
-IUSE="debug nethack pam selinux multiuser"
+IUSE="debug nethack pam selinux multiuser vsplit"
 
 RDEPEND=">=sys-libs/ncurses-5.2
 	pam? ( virtual/pam )
@@ -92,7 +92,7 @@ src_prepare() {
 	epatch "${FILESDIR}"/${PV}-extend-d_termname-ng2.patch
 
 	# Vertical split functionality
-	epatch "${WORKDIR}"/${VSPLIT%.*}
+	use vsplit && epatch "${WORKDIR}"/${VSPLIT%.*}
 
 	# reconfigure
 	eautoconf

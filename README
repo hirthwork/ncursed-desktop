@@ -1,1 +1,6 @@
 Complete desktop environment using ncurses based apps.
+
+Changes include:
+ - mutt patch preventing segfault when using imap;
+ - screen vertical split patch;
+ - mcabber-modules ebuild;
