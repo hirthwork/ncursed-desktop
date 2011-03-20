@@ -27,7 +27,7 @@ src_configure() {
 	./autogen.sh || die "autoconf failed"
 	local myconf=""
 	for i in ${IUSE}; do
-		if use ${i}; then
+		if [ ${i} != "crypt" ] && use ${i}; then
 			myconf="${myconf} --enable-module-${i}"
 		fi
 	done
