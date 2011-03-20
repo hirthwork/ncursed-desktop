@@ -18,6 +18,7 @@ KEYWORDS="~x86 ~amd64"
 IUSE="crypt"
 
 RDEPEND="=net-im/mcabber-0.10.1[crypt=]
+	=net-libs/mod-mcabber-pep-0.10.1[crypt=]
 	>=net-libs/loudmouth-1.0
 	media-libs/libpng
 	media-libs/aalib"
