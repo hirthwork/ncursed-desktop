@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<herd>net-im</herd>
+<maintainer>
+  <email>potapov.d@gmail.com</email>
+  <name>Dmitry Potapov</name>
+  <description>Secondary Maintainer</description>
+</maintainer>
+</pkgmetadata>

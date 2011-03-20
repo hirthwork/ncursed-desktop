@@ -4,3 +4,5 @@ Changes include:
  - mutt patch preventing segfault when using imap;
  - screen vertical split patch;
  - mcabber-modules ebuild;
+ - mod-mcabber-pep ebuild;
+ - mod-mcabber-avatar ebuild;
