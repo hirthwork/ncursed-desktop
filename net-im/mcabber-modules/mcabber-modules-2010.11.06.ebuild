@@ -36,4 +36,12 @@ src_configure() {
 
 src_install() {
 	make DESTDIR="${D}" install || die "install failed"
+	use extsayng && cp extsay-ng/extsay.sh /usr/lib/mcabber/
+}
+
+pkg_postinst() {
+	if use extsay; then
+		elog "You will need to enable FIFO and set extsay_script_path"
+		elog "to /usr/lib/mcabber/extsay.sh to use extsay module"
+	fi
 }
