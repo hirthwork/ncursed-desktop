@@ -31,7 +31,6 @@ src_configure() {
 			myconf="${myconf} --enable-module-${i}"
 		fi
 	done
-	echo "myconf = ${myconf}"
 	econf ${myconf} || die "configure failed"
 }
 
