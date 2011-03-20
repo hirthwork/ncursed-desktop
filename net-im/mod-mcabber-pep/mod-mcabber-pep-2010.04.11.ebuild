@@ -24,9 +24,7 @@ DEPEND="${DEPEND}
 
 src_configure() {
 	use crypt && append-flags -D_FILE_OFFSET_BITS=64
-	(cd ${S} && epatch "${FILESDIR}"/install_prefix.patch && cd ->/dev/null) ||
-		die "Patch failed"
-	cmake ${S} || die "CMake failed"
+	cmake -DCMAKE_INSTALL_PREFIX="/usr" ${S} || die "CMake failed"
 }
 
 src_install() {

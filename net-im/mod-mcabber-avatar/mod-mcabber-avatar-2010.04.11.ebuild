@@ -28,9 +28,9 @@ src_configure() {
 	use crypt && append-flags -D_FILE_OFFSET_BITS=64
 	(cd ${S} && epatch "${FILESDIR}"/include_dirs.patch && cd ->/dev/null) ||
 		die "Patch failed"
-	cmake ${S} || die "CMake failed"
+	cmake -DCMAKE_INSTALL_PREFIX="/usr" -DMCABBER_INCLUDE_DIRS="/usr/include/gpgme" ${S} || die "CMake failed"
 }
 
 src_install() {
-	make DESTDIR="${D}" install || die "install failed"
+	make VERBOSE=1 DESTDIR="${D}" install || die "install failed"
 }

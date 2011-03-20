@@ -1,6 +1,6 @@
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -29,12 +29,7 @@
+@@ -29,12 +29,6 @@
  set(AALIB_LIBRARY_DIRS "/usr/lib" CACHE FILEPATH "Path, where AAlib is located")
  set(AALIB_INCLUDE_DIRS "/usr/include" CACHE FILEPATH "Path to AAlib includes")
  set(AALIB_LIBRARIES "-laa" CACHE TEXT "Libraries, necessary to link with AAlib")
@@ -10,16 +10,6 @@
 -if(NOT HAVE_MCABBER_PEP_H)
 -	message(SEND_ERROR "Pep module header not found")
 -endif()
-+set(CMAKE_INSTALL_PREFIX "/usr")
  include(CheckSymbolExists)
  set(CMAKE_REQUIRED_INCLUDES ${LM_INCLUDE_DIRS})
  set(CMAKE_REQUIRED_LIBRARIES ${LM_LIBRARIES})
-@@ -55,7 +50,7 @@
-                     ${LM_INCLUDE_DIRS}
- 					${PNG_INCLUDE_DIRS}
- 					${AALIB_INCLUDE_DIRS}
--                    ${MCABBER_INCLUDE_DIRS})
-+                    )
- target_link_libraries(avatar ${GLIB_LIBRARIES}
- 					  ${LM_LIBRARIES}
- 					  ${PNG_LIBRARIES}
