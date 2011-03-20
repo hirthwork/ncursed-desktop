@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<herd>net-im</herd>
+<maintainer>
+  <email>potapov.d@gmail.com</email>
+  <name>Dmitry Potapov</name>
+  <description>Secondary Maintainer</description>
+</maintainer>
+<use>
+  <flag name='clock'>Use the 'info' option to display the date and time in the
+  status bar</flag>
+  <flag name='comment'>Add a command "#" to ignore a line</flag>
+  <flag name='extsayng'>If you use the screen utility, this module will let you
+	  open your editor in a new screen window, and will send the message once
+	  you exit the editor.</flag>
+  <flag name='ignore_auth'>Ignore subscription requests from every jid matching
+  configurable regexs</flag>
+  <flag name='info_count'>Displays the number of unread messages (buffers) in
+	  the status bar</flag>
+  <flag name='killpresence'>Add two commands, killpresence and killchatstates,
+  that can be used repectively to ignore the current presence from a fulljid
+  (e.g. to kill a "ghost") and to reset the chat state status of an online
+  contact</flag>
+  <flag name='lastmsg'>Stores highlighted messages received in MUC rooms while
+	  you are away</flag>
+</use>
+</pkgmetadata>
