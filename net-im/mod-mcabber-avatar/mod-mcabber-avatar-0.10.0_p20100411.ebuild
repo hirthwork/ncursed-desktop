@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~x86 ~amd64"
 IUSE="crypt"
 
-RDEPEND=">=net-im/mcabber-0.10.0[crypt=]
+RDEPEND="=net-im/mcabber-0.10.0[crypt=]
 	>=net-libs/loudmouth-1.0
 	media-libs/libpng
 	media-libs/aalib"

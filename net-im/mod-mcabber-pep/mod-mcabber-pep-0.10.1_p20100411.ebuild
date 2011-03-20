@@ -17,13 +17,15 @@ SLOT="0"
 KEYWORDS="~x86 ~amd64"
 IUSE="crypt"
 
-RDEPEND=">=net-im/mcabber-0.10.0[crypt=]
+RDEPEND="=net-im/mcabber-0.10.1[crypt=]
 	>=net-libs/loudmouth-1.0"
 DEPEND="${DEPEND}
 	dev-util/cmake"
 
 src_configure() {
 	use crypt && append-flags -D_FILE_OFFSET_BITS=64
+	(cd ${S} && epatch "${FILESDIR}"/pep_branch.patch && cd ->/dev/null) ||
+		die "Branch patch failed"
 	cmake -DCMAKE_INSTALL_PREFIX="/usr" ${S} || die "CMake failed"
 }
 
