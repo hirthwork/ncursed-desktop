@@ -15,14 +15,16 @@ S="${PN}-${HASH}"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
-IUSE="clock comment extsayng ignore_auth info_msgcount killpresence lastmsg"
+IUSE="crypt clock comment extsayng ignore_auth info_msgcount killpresence lastmsg"
 
-DEPEND=">=net-im/mcabber-0.10.0
+DEPEND=">=net-im/mcabber-0.10.0[crypt=]
 	extsayng? ( app-misc/screen )"
 RDEPEND="${DEPEND}"
 
 src_configure() {
-	use clock && append-flags -D_FILE_OFFSET_BITS=64
+	use crypt && ( use clock || use extsay || use ignore_auth ||
+		use info_msgcount || use killpresence || use lastmsg ) &&
+		append-flags -D_FILE_OFFSET_BITS=64
 	cp -r ${S}/* .
 	./autogen.sh || die "autoconf failed"
 	local myconf=""
