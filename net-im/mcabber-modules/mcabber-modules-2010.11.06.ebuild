@@ -22,9 +22,7 @@ DEPEND=">=net-im/mcabber-0.10.0[crypt=]
 RDEPEND="${DEPEND}"
 
 src_configure() {
-	use crypt && ( use clock || use extsay || use ignore_auth ||
-		use info_msgcount || use killpresence || use lastmsg ) &&
-		append-flags -D_FILE_OFFSET_BITS=64
+	use crypt && append-flags -D_FILE_OFFSET_BITS=64
 	cp -r ${S}/* .
 	./autogen.sh || die "autoconf failed"
 	local myconf=""
