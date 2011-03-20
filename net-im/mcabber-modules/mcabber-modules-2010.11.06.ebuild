@@ -36,7 +36,8 @@ src_configure() {
 
 src_install() {
 	make DESTDIR="${D}" install || die "install failed"
-	use extsayng && cp extsay-ng/extsay.sh /usr/lib/mcabber/
+	insinto /usr/lib/mcabber
+	use extsayng && doins extsay-ng/extsay.sh "${D}"/usr/lib/mcabber/ || die
 }
 
 pkg_postinst() {
