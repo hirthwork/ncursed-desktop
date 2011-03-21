@@ -28,5 +28,5 @@ src_configure() {
 }
 
 src_install() {
-	CMAKE_INSTALL_PREFIX=/usr make DESTDIR="${D}" install || die "install failed"
+	make DESTDIR="${D}" install || die "install failed"
 }

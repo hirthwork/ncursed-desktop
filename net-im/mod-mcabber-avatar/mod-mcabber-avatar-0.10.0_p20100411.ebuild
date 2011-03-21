@@ -33,5 +33,5 @@ src_configure() {
 }
 
 src_install() {
-	make VERBOSE=1 DESTDIR="${D}" install || die "install failed"
+	make DESTDIR="${D}" install || die "install failed"
 }
