@@ -93,7 +93,10 @@ src_prepare() {
 
 	# we conditionalise this one, simply because it has considerable
 	# impact on the code
-	use sidebar && epatch "${PATCHDIR}"/sidebar.patch
+	if use sidebar; then
+		epatch "${PATCHDIR}"/sidebar.patch
+		epatch "${FILESDIR}"/sidebar_utf8.patch
+	fi
 
 	# fixing http://dev.mutt.org/trac/ticket/3288
 	use imap && epatch "${DISTDIR}"/${IMAP_PATCH}

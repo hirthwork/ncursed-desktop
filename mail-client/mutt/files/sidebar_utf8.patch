@@ -1,0 +1,135 @@
+--- a/sidebar.c
++++ b/sidebar.c
+@@ -31,6 +31,33 @@
+ #include "keymap.h"
+ #include <stdbool.h>
+ 
++size_t strlen_utf8(const char* str)
++{
++    size_t count = 0;
++    if(str)
++    {
++        while (*str)
++        {
++            count += ((*str++ & 0xC0) != 0x80);
++        }
++    }
++    return count;
++}
++
++static void strncpy_utf8(char* dst, const char* src, size_t count)
++{
++    while (*src && count)
++    {
++        count -= ((*src & 0xC0) != 0x80);
++        *dst++ = *src++;
++    }
++
++    while(count--)
++    {
++        *dst++ = '\0';
++    }
++}
++
+ /*BUFFY *CurBuffy = 0;*/
+ static BUFFY *TopBuffy = 0;
+ static BUFFY *BottomBuffy = 0;
+@@ -84,32 +111,40 @@
+ {
+ 	static char *entry = 0;
+ 	char *c;
+-	int i = 0;
++        int i;
++	int l = strlen_utf8(box);
+ 	int delim_len = strlen(SidebarDelim);
++        /* utf-8 character can't take more than 6 bytes */
++        int buffer_size = (SidebarWidth - delim_len + 1) * 6;
+ 
+-	c = realloc(entry, SidebarWidth - delim_len + 2);
++	c = realloc(entry, buffer_size);
+ 	if ( c ) entry = c;
+-	entry[SidebarWidth - delim_len + 1] = 0;
+-	for (; i < SidebarWidth - delim_len + 1; entry[i++] = ' ' );
+-	i = strlen(box);
+-	strncpy( entry, box, i < (SidebarWidth - delim_len + 1) ? i : (SidebarWidth - delim_len + 1) );
++	strncpy_utf8( entry, box, SidebarWidth - delim_len);
++        entry[buffer_size - 1] = '\0';
+ 
++        l = strlen_utf8(entry);
++        i = strlen(entry);
++        while (l < SidebarWidth - delim_len)
++        {
++            entry[i++] = ' ';
++            ++l;
++        }
+         if (size == -1)
+-                sprintf(entry + SidebarWidth - delim_len - 3, "?");
++                sprintf(entry + i - 3, "?");
+         else if ( new ) {
+           if (flagged > 0) {
+               sprintf(
+-		        entry + SidebarWidth - delim_len - 5 - quick_log10(size) - quick_log10(new) - quick_log10(flagged),
++		        entry + i - 5 - quick_log10(size) - quick_log10(new) - quick_log10(flagged),
+ 		        "% d(%d)[%d]", size, new, flagged);
+           } else {
+               sprintf(
+-                      entry + SidebarWidth - delim_len - 3 - quick_log10(size) - quick_log10(new),
++                      entry + i - 3 - quick_log10(size) - quick_log10(new),
+                       "% d(%d)", size, new);
+           }
+         } else if (flagged > 0) {
+-              sprintf( entry + SidebarWidth - delim_len - 3 - quick_log10(size) - quick_log10(flagged), "% d[%d]", size, flagged);
++              sprintf( entry + i - 3 - quick_log10(size) - quick_log10(flagged), "% d[%d]", size, flagged);
+         } else {
+-              sprintf( entry + SidebarWidth - delim_len - 1 - quick_log10(size), "% d", size);
++              sprintf( entry + i - 1 - quick_log10(size), "% d", size);
+         }
+ 	return entry;
+ }
+@@ -265,9 +300,7 @@
+ 				strncat(sidebar_folder_name, basename(tmp->path), strlen(basename(tmp->path)) + sidebar_folder_depth);
+ 			}
+ 		}
+-		printw( "%.*s", SidebarWidth - delim_len + 1,
+-			make_sidebar_entry(sidebar_folder_name, tmp->msgcount,
+-			tmp->msg_unread, tmp->msg_flagged));
++		printw( "%s", make_sidebar_entry(sidebar_folder_name, tmp->msgcount, tmp->msg_unread, tmp->msg_flagged));
+ 		if (sidebar_folder_depth > 0)
+ 		        free(sidebar_folder_name);
+ 		lines++;
+--- a/compose.c
++++ b/compose.c
+@@ -208,6 +208,7 @@
+ 
+ #ifdef MIXMASTER
+ 
++size_t strlen_utf8(const char* str);
+ static void redraw_mix_line (LIST *chain)
+ {
+   int c;
+@@ -221,21 +222,21 @@
+     clrtoeol ();
+     return;
+   }
+-  
++
+   for (c = 12; chain; chain = chain->next)
+   {
+     t = chain->data;
+     if (t && t[0] == '0' && t[1] == '\0')
+       t = "<random>";
+-    
+-    if (c + mutt_strlen (t) + 2 >= COLS - SidebarWidth)
++
++    if (c + strlen_utf8 (t) + 2 >= COLS - SidebarWidth)
+       break;
+ 
+     addstr (NONULL(t));
+     if (chain->next)
+       addstr (", ");
+ 
+-    c += mutt_strlen (t) + 2;
++    c += strlen_utf8 (t) + 2;
+   }
+ }
+ #endif /* MIXMASTER */
