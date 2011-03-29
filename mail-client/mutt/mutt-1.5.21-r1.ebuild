@@ -8,7 +8,8 @@ inherit eutils flag-o-matic autotools
 
 PATCHSET_REV="-r1"
 
-IMAP_PATCH="537694-segv-imap-headers.patch"
+IMAP_PATCH="mutt-1.5.21-hdrcnt.patch"
+#IMAP_PATCH="537694-segv-imap-headers.patch"
 DESCRIPTION="A small but very powerful text-based mail client"
 HOMEPAGE="http://www.mutt.org"
 SRC_URI="ftp://ftp.mutt.org/mutt/devel/${P}.tar.gz
