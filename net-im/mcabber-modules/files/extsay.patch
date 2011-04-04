@@ -1,0 +1,84 @@
+--- a/extsay-ng/extsay.c
++++ b/extsay-ng/extsay.c
+@@ -53,7 +53,8 @@
+ {
+   GError *err = NULL;
+   gchar *argv[] = { "screen", "-r", "-X", "screen", NULL,
+-                    NULL, NULL, NULL, NULL };
++                    NULL, NULL, NULL, NULL, NULL };
++  gchar *fifopath;
+   gchar strwinheight[32];
+   gchar *fpath;
+   gboolean winsplit, ret;
+@@ -69,20 +70,30 @@
+   fpath = expand_filename(fpath);
+   argv[4] = fpath;
+ 
++  fifopath = (gchar*)settings_opt_get("fifo_name");
++
+   // Helper script parameter #1
++  if (!fifopath || !fifopath[0]) {
++    scr_log_print(LPRINT_NORMAL, "Please set option 'fifo_name'.");
++    return;
++  }
++  fifopath = expand_filename(fifopath);
++  argv[5] = fifopath;
++
++  // Helper script parameter #2
+   if (args && *args)
+-    argv[5] = (gchar*)args;
++    argv[6] = (gchar*)args;
+   else
+-    argv[5] = ".";
++    argv[6] = ".";
+ 
+   // Update parameters for the helper script
+   winsplit = settings_opt_get_int("extsay_split_win");
+   if (winsplit) {
+     gint winheight = settings_opt_get_int("extsay_win_height");
+-    argv[6] = "winsplit";       // Helper script parameter #2
++    argv[7] = "winsplit";       // Helper script parameter #3
+     if (winheight > 0 && winheight < 256) {
+       snprintf(strwinheight, sizeof strwinheight, "%d", winheight);
+-      argv[7] = strwinheight;   // Helper script parameter #3
++      argv[8] = strwinheight;   // Helper script parameter #4
+     }
+   }
+ 
+--- a/extsay-ng/extsay.sh
++++ b/extsay-ng/extsay.sh
+@@ -10,7 +10,7 @@
+ # This script is free software.
+ # MiKael, 2010-04-03
+ 
+-FIFOPATH="$HOME/.mcabber/mcabber.fifo"
++fifopath=${1:="$HOME/.mcabber/mcabber.fifo"}
+ 
+ tmpdir=${TMPDIR:=$TMP}
+ tmpdir=${tmpdir:="/tmp"}
+@@ -19,12 +19,12 @@
+ jid="."
+ 
+ # Use argument as a recipient JID, if it is provided
+-[ $# -ge 1 ] && jid=$1
+-[ $# -ge 2 ] && winsplit=$2
+-[ $# -ge 3 ] && winheight=$3
++[ $# -ge 1 ] && jid=$2
++[ $# -ge 2 ] && winsplit=$3
++[ $# -ge 3 ] && winheight=$4
+ 
+ # Leave if the FIFO is not available
+-[ -p $FIFOPATH ] || exit 255
++[ -p $fifopath ] || exit 255
+ 
+ tf=$(mktemp $tmpdir/extsay-${jid%%/*}-XXXXXX) || exit 255
+ 
+@@ -46,7 +46,7 @@
+ else
+     cmd="echo [extsay] The file has not been modified.  Message cancelled."
+ fi
+-echo $cmd >> $FIFOPATH
++echo $cmd >> $fifopath
+ 
+ # Do not remove the file too soon
+ setsid sh -c "cd / && sleep 20 && rm $tf & :" /dev/null 2>&1 < /dev/null

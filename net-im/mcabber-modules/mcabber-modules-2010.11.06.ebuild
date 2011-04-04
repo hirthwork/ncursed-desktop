@@ -21,10 +21,14 @@ DEPEND=">=net-im/mcabber-0.10.0[crypt=]
 	extsayng? ( app-misc/screen )"
 RDEPEND="${DEPEND}"
 
-src_configure() {
+src_prepare() {
 	use crypt && append-flags -D_FILE_OFFSET_BITS=64
 	cp -r ${S}/* .
 	./autogen.sh || die "autoconf failed"
+	use extsayng && epatch "${FILESDIR}"/extsay.patch
+}
+
+src_configure() {
 	local myconf=""
 	for i in ${IUSE}; do
 		if [ ${i} != "crypt" ] && use ${i}; then
