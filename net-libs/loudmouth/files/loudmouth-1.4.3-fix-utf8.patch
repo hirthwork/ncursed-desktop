@@ -1,60 +1,21 @@
 --- a/loudmouth/lm-parser.c
 +++ b/loudmouth/lm-parser.c
-@@ -239,6 +239,46 @@
- 	return parser;
- }
-
-+gchar *
-+_g_utf8_make_valid (const gchar *name)
-+{ 
-+  GString *string;
-+  const gchar *remainder, *invalid;
-+  gint remaining_bytes, valid_bytes;
-+
-+  g_return_val_if_fail (name != NULL, NULL);
-+
-+  string = NULL;
-+  remainder = name;
-+  remaining_bytes = strlen (name);
-+
-+  while (remaining_bytes != 0)
-+    {
-+      if (g_utf8_validate (remainder, remaining_bytes, &invalid))
-+        break;
-+      valid_bytes = invalid - remainder;
-+
-+      if (string == NULL)
-+        string = g_string_sized_new (remaining_bytes);
-+
-+      g_string_append_len (string, remainder, valid_bytes);
-+      /* append U+FFFD REPLACEMENT CHARACTER */
-+      g_string_append (string, "\357\277\275");
-+
-+      remaining_bytes -= valid_bytes + 1;
-+      remainder = invalid + 1;
-+    }
-+
-+  if (string == NULL)
-+    return g_strdup (name);
-+
-+  g_string_append (string, remainder);
-+
-+  g_assert (g_utf8_validate (string->str, -1, NULL));
-+
-+  return g_string_free (string, FALSE);
-+}
-+
+@@ -242,6 +242,7 @@
  void
  lm_parser_parse (LmParser *parser, const gchar *string)
  {
-@@ -249,12 +289,13 @@
++	gchar* valid_string = 0;
+ 	g_return_if_fail (parser != NULL);
+ 	
+         if (!parser->context) {
+@@ -249,12 +250,13 @@
                                                                parser, NULL);
          }
          
 -        if (g_markup_parse_context_parse (parser->context, string, 
 -                                          (gssize)strlen (string), NULL)) {
 -        } else {
-+        gchar* valid_string = _g_utf8_make_valid(string);
++        valid_string = g_filename_display_name(string);
 +        if (!g_markup_parse_context_parse (parser->context, valid_string,
 +                                          (gssize)strlen (valid_string), NULL)) {
  		g_markup_parse_context_free (parser->context);
@@ -64,3 +25,61 @@
  }
  
  void
+--- a/loudmouth/lm-socket.c
++++ b/loudmouth/lm-socket.c
+@@ -248,9 +248,9 @@
+ 		     GIOCondition  condition,
+ 		     LmSocket     *socket)
+ {
+-	gchar     buf[IN_BUFFER_SIZE];
++	gchar*    buf = 0;
++	gsize     buf_pos = 0;
+ 	gsize     bytes_read = 0;
+-	gboolean  read_anything = FALSE;
+ 	gboolean  hangup = 0;
+ 	gint      reason = 0;
+ 
+@@ -258,9 +258,12 @@
+ 		return FALSE;
+ 	}
+ 
++	buf = g_malloc(IN_BUFFER_SIZE);
++
+ 	while (socket_attempt_another_read (socket, condition) && 
+-	       socket_read_incoming (socket, buf, IN_BUFFER_SIZE, 
++	       socket_read_incoming (socket, buf + buf_pos, IN_BUFFER_SIZE,
+ 				     &bytes_read, &hangup, &reason)) {
++		gchar* temp_buf = buf;
+ 		
+ 		g_log (LM_LOG_DOMAIN, LM_LOG_LEVEL_NET, "\nRECV [%d]:\n", 
+ 		       (int)bytes_read);
+@@ -272,16 +275,26 @@
+ 		
+ 		lm_verbose ("Read: %d chars\n", (int)bytes_read);
+ 
+-		(socket->data_func) (socket, buf, socket->user_data);
+ 
+-		read_anything = TRUE;
++		buf_pos += bytes_read;
++		buf = g_realloc(buf, buf_pos + IN_BUFFER_SIZE);
++		if (!buf) {
++			buf = temp_buf;
++			break;
++		}
+ 
+ 		condition = g_io_channel_get_buffer_condition (socket->io_channel);
+ 	}
+ 
++	if (buf_pos) {
++		(socket->data_func) (socket, buf, socket->user_data);
++	}
++
++	g_free(buf);
++
+ 	/* If we have read something, delay the hangup so that the data can be
+ 	 * processed. */
+-	if (hangup && !read_anything) {
++	if (hangup && !buf_pos) {
+ 		(socket->closed_func) (socket, reason, socket->user_data);
+ 		return FALSE;
+ 	}
