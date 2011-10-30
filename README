@@ -7,3 +7,4 @@ Changes include:
  - mcabber-modules ebuild;
  - mod-mcabber-pep ebuild;
  - mod-mcabber-avatar ebuild;
+ - loudmouth patch for proper handling of incorrect UTF-8 sequences
