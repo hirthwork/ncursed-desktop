@@ -1,9 +1,11 @@
 Complete desktop environment using ncurses based apps.
 
 Changes include:
+ - mutt patch providing ability to disable IMAP authentication using SASL;
  - mutt patch preventing segfault when using imap;
  - mutt sidebar patch for proper line length calculation (it assumes utf8 locale);
  - screen vertical split patch;
  - mcabber-modules ebuild;
  - mod-mcabber-pep ebuild;
  - mod-mcabber-avatar ebuild;
+ - loudmouth patch for proper handling of incorrect UTF-8 sequences

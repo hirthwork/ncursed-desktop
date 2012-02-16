@@ -1,0 +1,68 @@
+--- a/imap/auth.c
++++ b/imap/auth.c
+@@ -30,7 +30,7 @@
+ 
+ static imap_auth_t imap_authenticators[] = {
+ #ifdef USE_SASL
+-  { imap_auth_sasl, NULL },
++  { imap_auth_sasl, "sasl" },
+ #else
+   { imap_auth_anon, "anonymous" },
+ #endif
+@@ -74,8 +74,7 @@
+ 
+       while (authenticator->authenticate)
+       {
+-	if (!authenticator->method ||
+-	    !ascii_strcasecmp (authenticator->method, method))
++	if (!ascii_strcasecmp (authenticator->method, method))
+ 	  if ((r = authenticator->authenticate (idata, method)) !=
+ 	      IMAP_AUTH_UNAVAIL)
+ 	  {
+--- a/imap/auth_sasl.c
++++ b/imap/auth_sasl.c
+@@ -42,6 +42,11 @@
+   unsigned int len, olen;
+   unsigned char client_start;
+ 
++  if (method && !ascii_strcasecmp(method, "sasl"))
++  {
++      method = NULL;
++  }
++
+   if (mutt_sasl_client_new (idata->conn, &saslconn) < 0)
+   {
+     dprint (1, (debugfile,
+--- a/pop_auth.c
++++ b/pop_auth.c
+@@ -48,6 +48,11 @@
+   const char *pc = NULL;
+   unsigned int len, olen, client_start;
+ 
++  if (method && !ascii_strcasecmp(method, "sasl"))
++  {
++      method = NULL;
++  }
++
+   if (mutt_sasl_client_new (pop_data->conn, &saslconn) < 0)
+   {
+     dprint (1, (debugfile, "pop_auth_sasl: Error allocating SASL connection.\n"));
+@@ -279,7 +284,7 @@
+ 
+ static pop_auth_t pop_authenticators[] = {
+ #ifdef USE_SASL
+-  { pop_auth_sasl, NULL },
++  { pop_auth_sasl, "sasl" },
+ #endif
+   { pop_auth_apop, "apop" },
+   { pop_auth_user, "user" },
+@@ -323,8 +328,7 @@
+ 
+       while (authenticator->authenticate)
+       {
+-	if (!authenticator->method ||
+-	    !ascii_strcasecmp (authenticator->method, method))
++	if (!ascii_strcasecmp (authenticator->method, method))
+ 	{
+ 	  ret = authenticator->authenticate (pop_data, method);
+ 	  if (ret == POP_A_SOCKET)
