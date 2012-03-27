@@ -1,16 +1,10 @@
 # Copyright 2012 Dmitry Potapov
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=3
-
-RESTRICT_PYTHON_ABIS="3.*"
-SUPPORT_PYTHON_ABIS="1"
-
-inherit eutils multilib python
+EAPI=2
 
 DESCRIPTION="A tool for use with clang to analyze #includes in C and C++ source files"
 HOMEPAGE="http://code.google.com/p/include-what-you-use/"
-# Fetching LLVM as well: see http://llvm.org/bugs/show_bug.cgi?id=4840
 SRC_URI="http://${PN}.googlecode.com/files/${P}-1.tar.gz"
 
 LICENSE="UoI-NCSA"
