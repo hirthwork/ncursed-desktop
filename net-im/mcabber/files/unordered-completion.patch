@@ -1,6 +1,44 @@
 --- a/mcabber/compl.c
 +++ b/mcabber/compl.c
-@@ -159,11 +159,11 @@
+@@ -113,15 +113,31 @@
+ // Frees reserved id for category.
+ // Note, that for now it not validates its input, so, be careful
+ // and specify exactly what you get from compl_new_category.
+-void compl_del_category(guint id)
++void compl_del_category(guint categ)
+ {
+-  if (!id) {
+-    scr_log_print(LPRINT_LOGNORM, "Error: compl_del_category() - "
++  guint64 catv;
++  GSList *sl_cat;
++
++  if (categ) {
++    categ--;
++    catv = 1UL << categ;
++
++    // Look for category
++    for (sl_cat=Categories; sl_cat; sl_cat = g_slist_next(sl_cat)) {
++      if (catv == ((category*)sl_cat->data)->flag)
++        break;
++    }
++    if (sl_cat) {
++      Categories = g_slist_delete_link(Categories, sl_cat);
++      registered_cats &= ~catv;
++    } else {
++      scr_log_print(LPRINT_LOGNORM, "Error: compl_add_category_word() - "
++                    "Category not found.");
++    }
++  } else {
++    scr_log_print(LPRINT_LOGNORM, "Error: compl_add_category_word() - "
+                   "Invalid category.");
+-    return;
+   }
+-  id--;
+-  registered_cats &= ~(1<<id);
+ }
+ #endif
+
+@@ -159,11 +175,11 @@
            compval = g_strdup_printf("%s%s", word+len, suffix);
          else
            compval = g_strdup(word+len);
@@ -14,7 +52,7 @@
    c->next = c->list;
    InputCompl = c;
    return g_slist_length(c->list);
-@@ -218,39 +218,41 @@
+@@ -218,39 +234,41 @@
    return r;
  }
 
@@ -54,10 +92,8 @@
      scr_log_print(LPRINT_LOGNORM, "Error: compl_add_category_word() - "
                    "Invalid category.");
 -    return;
-   }
-+  return cat;
-+}
-
+-  }
+-
 -  categ--;
 -  catv = 1UL << categ;
 -
@@ -65,21 +101,23 @@
 -  for (sl_cat=Categories; sl_cat; sl_cat = g_slist_next(sl_cat)) {
 -    if (catv == ((category*)sl_cat->data)->flag)
 -      break;
--  }
+   }
 -  if (!sl_cat) {   // Category not found, let's create it
 -    cat = g_new0(category, 1);
 -    cat->flag = catv;
 -    Categories = g_slist_append(Categories, cat);
 -  } else
 -    cat = (category*)sl_cat->data;
--
-+static gchar* prepare_word(const gchar* word)
++  return cat;
++}
+
++static const gchar* prepare_word(const gchar* word)
 +{
-+  gchar* nword;
++  const gchar* nword;
    // If word is not space-terminated, we add one trailing space
    for (nword = (char*)word; *nword; nword++)
      ;
-@@ -260,59 +262,69 @@
+@@ -260,59 +278,69 @@
    } else {              // word is fine
      nword = g_strdup(word);
    }
@@ -92,7 +130,7 @@
 +// Adds a keyword as a possible completion in category categ.
 +void compl_add_category_word(guint categ, const gchar *word)
 +{
-+  gchar *nword;
++  const gchar *nword;
 +  category *cat = prepare_category(categ, 1);
 
 -  cat->words = g_slist_insert_sorted(cat->words, nword,
@@ -122,7 +160,7 @@
 -  GSList *sl_cat, *sl_elt;
 -  category *cat;
 -  char *nword;
-+  gchar *nword;
++  const gchar *nword;
 +  category *cat = prepare_category(categ, 1);
 
 -  if (!categ) {
