@@ -25,11 +25,11 @@
 +      Categories = g_slist_delete_link(Categories, sl_cat);
 +      registered_cats &= ~catv;
 +    } else {
-+      scr_log_print(LPRINT_LOGNORM, "Error: compl_add_category_word() - "
++      scr_log_print(LPRINT_LOGNORM, "Error: compl_del_category() - "
 +                    "Category not found.");
 +    }
 +  } else {
-+    scr_log_print(LPRINT_LOGNORM, "Error: compl_add_category_word() - "
++    scr_log_print(LPRINT_LOGNORM, "Error: compl_del_category() - "
                    "Invalid category.");
 -    return;
    }
@@ -89,7 +89,8 @@
 +    } else
 +      cat = (category*)sl_cat->data;
 +  } else {
-     scr_log_print(LPRINT_LOGNORM, "Error: compl_add_category_word() - "
+-    scr_log_print(LPRINT_LOGNORM, "Error: compl_add_category_word() - "
++    scr_log_print(LPRINT_LOGNORM, "Error: prepare_category() - "
                    "Invalid category.");
 -    return;
 -  }
