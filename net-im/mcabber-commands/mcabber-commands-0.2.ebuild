@@ -14,7 +14,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
 IUSE=""
-HASH="8030807"
+HASH="8028943"
 S="${WORKDIR}/hirthwork-${PN}-${HASH}"
 
 DEPEND=">=net-im/mcabber-0.10.0[unordered-completion]"
