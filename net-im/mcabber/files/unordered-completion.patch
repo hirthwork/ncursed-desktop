@@ -1,5 +1,29 @@
 --- a/mcabber/compl.c
 +++ b/mcabber/compl.c
+@@ -60,7 +60,7 @@
+ static guint64 registered_cats;
+
+ static inline void register_builtin_cat(guint c) {
+-  registered_cats |= 1UL << (c-1);
++  registered_cats |= 1ULL << (c-1);
+ }
+
+ void compl_init_system(void)
+@@ -98,12 +98,12 @@
+ guint compl_new_category(void)
+ {
+   guint i = 0;
+-  while ((registered_cats >> i) & 1)
++  while (registered_cats & (1ULL << i) && i < 8 * sizeof(registered_cats))
+     i++;
+   if (i >= 8 * sizeof (registered_cats))
+     return 0;
+   else {
+-    guint64 id = 1 << i;
++    guint64 id = 1ULL << i;
+     registered_cats |= id;
+     return i+1;
+   }
 @@ -113,15 +113,28 @@
  // Frees reserved id for category.
  // Note, that for now it not validates its input, so, be careful
@@ -8,13 +32,12 @@
 +void compl_del_category(guint categ)
  {
 -  if (!id) {
--    scr_log_print(LPRINT_LOGNORM, "Error: compl_del_category() - "
 +  guint64 catv;
 +  GSList *sl_cat;
 +
 +  if (categ) {
 +    categ--;
-+    catv = 1UL << categ;
++    catv = 1ULL << categ;
 +
 +    // Look for category
 +    for (sl_cat=Categories; sl_cat; sl_cat = g_slist_next(sl_cat)) {
@@ -26,7 +49,7 @@
 +      registered_cats &= ~catv;
 +    }
 +  } else {
-+    scr_log_print(LPRINT_LOGNORM, "Error: compl_del_category() - "
+     scr_log_print(LPRINT_LOGNORM, "Error: compl_del_category() - "
                    "Invalid category.");
 -    return;
    }
@@ -49,7 +72,7 @@
    c->next = c->list;
    InputCompl = c;
    return g_slist_length(c->list);
-@@ -218,39 +234,41 @@
+@@ -218,39 +231,41 @@
    return r;
  }
 
@@ -65,13 +88,24 @@
    GSList *sl_cat;
 -  category *cat;
 -  char *nword;
+-
+-  if (!categ) {
+-    scr_log_print(LPRINT_LOGNORM, "Error: compl_add_category_word() - "
+-                  "Invalid category.");
+-    return;
+-  }
 +  category *cat = 0;
 
--  if (!categ) {
+-  categ--;
+-  catv = 1UL << categ;
 +  if (categ) {
 +    categ--;
-+    catv = 1UL << categ;
-+
++    catv = 1ULL << categ;
+
+-  // Look for category
+-  for (sl_cat=Categories; sl_cat; sl_cat = g_slist_next(sl_cat)) {
+-    if (catv == ((category*)sl_cat->data)->flag)
+-      break;
 +    // Look for category
 +    for (sl_cat=Categories; sl_cat; sl_cat = g_slist_next(sl_cat)) {
 +      if (catv == ((category*)sl_cat->data)->flag)
@@ -86,19 +120,8 @@
 +    } else
 +      cat = (category*)sl_cat->data;
 +  } else {
--    scr_log_print(LPRINT_LOGNORM, "Error: compl_add_category_word() - "
 +    scr_log_print(LPRINT_LOGNORM, "Error: prepare_category() - "
-                   "Invalid category.");
--    return;
--  }
--
--  categ--;
--  catv = 1UL << categ;
--
--  // Look for category
--  for (sl_cat=Categories; sl_cat; sl_cat = g_slist_next(sl_cat)) {
--    if (catv == ((category*)sl_cat->data)->flag)
--      break;
++                  "Invalid category.");
    }
 -  if (!sl_cat) {   // Category not found, let's create it
 -    cat = g_new0(category, 1);
@@ -115,7 +138,7 @@
    // If word is not space-terminated, we add one trailing space
    for (nword = (char*)word; *nword; nword++)
      ;
-@@ -260,59 +278,69 @@
+@@ -260,59 +275,69 @@
    } else {              // word is fine
      nword = g_strdup(word);
    }
@@ -225,6 +248,15 @@
    }
  }
 
+@@ -332,7 +357,7 @@
+   }
+
+   *dynlist = FALSE;
+-  cat_flags = 1UL << (categ - 1);
++  cat_flags = 1ULL << (categ - 1);
+
+   // Look for the category
+   for (sl_cat=Categories; sl_cat; sl_cat = g_slist_next(sl_cat)) {
 --- a/mcabber/compl.h
 +++ b/mcabber/compl.h
 @@ -35,6 +35,7 @@
@@ -307,3 +339,4 @@
 -    runtime = TRUE;
    return err;
  }
+
