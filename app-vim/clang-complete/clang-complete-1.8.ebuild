@@ -7,7 +7,7 @@ inherit vim-plugin eutils
 
 DESCRIPTION="vim plugin: clang-based C++ completion"
 HOMEPAGE="http://www.vim.org/scripts/script.php?script_id=3302"
-SRC_URI="https://github.com/Rip-Rip/clang_complete/tarball/master -> ${P}.tar.gz"
+SRC_URI="https://github.com/Rip-Rip/clang_complete/tarball/v${PV} -> ${P}.tar.gz"
 
 LICENSE="vim"
 KEYWORDS="~amd64 ~x86"
@@ -15,7 +15,7 @@ IUSE=""
 
 RDEPEND=">=sys-devel/clang-3.0"
 
-S="${WORKDIR}/Rip-Rip-clang_complete-5507b8a"
+S="${WORKDIR}/Rip-Rip-clang_complete-8fa8cd5"
 
 src_prepare() {
 	epatch "${FILESDIR}"/cache.patch
