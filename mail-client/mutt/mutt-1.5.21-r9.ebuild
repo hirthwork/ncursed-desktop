@@ -1,12 +1,12 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/mail-client/mutt/mutt-1.5.21-r7.ebuild,v 1.2 2011/12/04 21:05:40 grobian Exp $
+# $Header: /var/cvsroot/gentoo-x86/mail-client/mutt/mutt-1.5.21-r9.ebuild,v 1.1 2012/04/28 15:05:01 grobian Exp $
 
 EAPI="3"
 
 inherit eutils flag-o-matic autotools
 
-PATCHSET_REV="-r7"
+PATCHSET_REV="-r12"
 
 DESCRIPTION="A small but very powerful text-based mail client"
 HOMEPAGE="http://www.mutt.org/"
@@ -81,6 +81,8 @@ src_prepare() {
 	epatch "${PATCHDIR}"/interix-btowc.patch
 	epatch "${PATCHDIR}"/solaris-ncurses-chars.patch
 	epatch "${PATCHDIR}"/gpgme-1.2.0.patch
+	epatch "${PATCHDIR}"/emptycharset-segfault.patch
+	epatch "${PATCHDIR}"/gpgkeyverify-segfault.patch
 	# same category, but functional bits
 	epatch "${PATCHDIR}"/dont-reveal-bbc.patch
 
@@ -103,6 +105,9 @@ src_prepare() {
 	# patch version string for bug reports
 	sed -i -e 's/"Mutt %s (%s)"/"Mutt %s (%s, Gentoo '"${PVR}"')"/' \
 		muttlib.c || die "failed patching in Gentoo version"
+
+	# allow user patches
+	epatch_user
 
 	# many patches touch the buildsystem, we always need this
 	AT_M4DIR="m4" eautoreconf
@@ -205,10 +210,15 @@ src_install() {
 	rm "${ED}"/etc/${PN}/mime.types
 	dosym /etc/mime.types /etc/${PN}/mime.types
 
-	# A man-page is always handy
+	# A man-page is always handy, so fake one
 	if use !doc; then
 		make -C doc DESTDIR="${D}" muttrc.man || die
-		cp doc/mutt.man mutt.1
+		# make the fake slightly better, bug #413405
+		sed -e 's#@docdir@/manual.txt#http://www.mutt.org/doc/devel/manual.html#' \
+			-e 's#in @docdir@,#at http://www.mutt.org/,#' \
+			-e "s#@sysconfdir@#${EPREFIX}/etc/${PN}#" \
+			-e "s#@bindir@#${EPREFIX}/usr/bin#" \
+			doc/mutt.man > mutt.1
 		cp doc/muttbug.man flea.1
 		cp doc/muttrc.man muttrc.5
 		doman mutt.1 flea.1 muttrc.5
