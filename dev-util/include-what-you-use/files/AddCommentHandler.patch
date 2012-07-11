@@ -1,0 +1,11 @@
+--- a/iwyu.cc
++++ b/iwyu.cc
+@@ -3658,7 +3658,7 @@
+         = new IwyuAstConsumer(visitor_state);
+
+     compiler.getPreprocessor().addPPCallbacks(preprocessor_consumer);
+-    compiler.getPreprocessor().addCommentHandler(preprocessor_consumer);
++    compiler.getPreprocessor().AddCommentHandler(preprocessor_consumer);
+     return ast_consumer;
+   }
+ };
