@@ -27,6 +27,6 @@ src_install() {
 	cd httpcomponents-client-${PV} || die "failed to change dir"
 	insinto /usr/share/httpclient/lib
 	newins httpclient/target/httpclient-${PV}.jar httpclient.jar || die "failed to install httpclient"
-	doins httpmime/target/httpmime-${PV}.jar httpmime.jar || die "failed to install httpmime"
+	newins httpmime/target/httpmime-${PV}.jar httpmime.jar || die "failed to install httpmime"
 }
 
