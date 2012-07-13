@@ -14,8 +14,8 @@ SLOT="1"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 COMMON_DEP="
-	dev-java/asm
-	dev-java/gnu-regexp
+	=dev-java/asm-3*
+	=dev-java/gnu-regexp-1*
 	>=dev-java/ant-core-1.7.0
 	dev-java/java-getopt"
 RDEPEND=">=virtual/jre-1.5
@@ -32,7 +32,7 @@ src_unpack() {
 	epatch "${FILESDIR}/0.9-system-jars.patch"
 
 	cd "${S}/lib"
-	java-pkg_jar-from asm-2
+	java-pkg_jar-from asm-3
 	java-pkg_jar-from gnu-regexp-1
 	java-pkg_jar-from ant-core ant.jar
 	java-pkg_jar-from java-getopt-1
