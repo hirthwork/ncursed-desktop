@@ -11,8 +11,7 @@ inherit java-pkg-2
 
 DESCRIPTION="Find Bugs in Java Programs"
 HOMEPAGE="http://findbugs.sourceforge.net/"
-VERSION="2.0.1-rc4"
-SRC_URI="mirror://sourceforge/${PN}/${PN}-${VERSION}-source.zip"
+SRC_URI="mirror://sourceforge/${PN}/${P}-source.zip"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
@@ -43,8 +42,6 @@ RDEPEND=">=virtual/jre-1.5
 DEPEND=">=virtual/jdk-1.5
 	app-arch/unzip
 	${CDEPEND}"
-
-S="${WORKDIR}/${PN}-${VERSION}"
 
 src_compile() {
 	ant || die "build failed"
