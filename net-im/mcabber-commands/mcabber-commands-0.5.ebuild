@@ -14,13 +14,13 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
 IUSE=""
-HASH="8030807"
+HASH="2a8262e"
 S="${WORKDIR}/hirthwork-${PN}-${HASH}"
 
-DEPEND=">=net-im/mcabber-0.10.0[unordered-completion]"
+DEPEND=">=net-im/mcabber-0.10.2[modules]"
 RDEPEND="${DEPEND}"
 
 src_install() {
-	make DESTDIR="${D}/usr/lib/mcabber" install || die "install failed"
+	make DESTDIR="${D}/usr/lib/mcabber" CFLAGS="${CFLAGS}" install || die "install failed"
 }
 
