@@ -17,10 +17,6 @@ RDEPEND=">=sys-devel/clang-3.0"
 
 S="${WORKDIR}/Rip-Rip-clang_complete-b4880dc"
 
-src_prepare() {
-	epatch ${FILESDIR}/cache-new.patch
-}
-
 src_compile() {
 	einfo "No build required"
 }
