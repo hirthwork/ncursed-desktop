@@ -8,14 +8,12 @@ inherit eutils
 
 DESCRIPTION="Custom commands plugin for mcabber"
 HOMEPAGE="https://github.com/hirthwork/${PN}"
-SRC_URI="https://github.com/hirthwork/${PN}/tarball/v${PV} -> ${P}.tar.gz"
+SRC_URI="https://github.com/hirthwork/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
 IUSE=""
-HASH="c017bdc"
-S="${WORKDIR}/hirthwork-${PN}-${HASH}"
 
 DEPEND=">=net-im/mcabber-0.10.2[modules]"
 RDEPEND="${DEPEND}"
