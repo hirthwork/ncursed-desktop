@@ -177,20 +177,7 @@
  #endif
 
  typedef struct {
-@@ -4551,6 +4553,12 @@
-     return;
-   }
-
-+  spellcheckable_commands = g_hash_table_new_full(
-+    g_str_hash,
-+    g_str_equal,
-+    g_free,
-+    g_free);
-+
-   langs = g_strsplit(spell_lang, " ", -1);
-   for (lang_iter = langs; *lang_iter; ++lang_iter) {
-     if (**lang_iter) { // Skip empty strings
-@@ -4561,6 +4569,12 @@
+@@ -4561,6 +4563,12 @@
      }
    }
    g_strfreev(langs);
@@ -203,16 +190,10 @@
  }
 
  // Deinitialization of spellchecker
-@@ -4568,6 +4582,34 @@
- {
-   g_slist_free_full(spell_checkers, spell_checker_free);
+@@ -4570,6 +4578,39 @@
    spell_checkers = NULL;
-+  if (spellcheckable_commands) {
-+    g_hash_table_destroy(spellcheckable_commands);
-+    spellcheckable_commands = NULL;
-+  }
-+}
-+
+ }
+
 +void spellcheck_enable(char* args)
 +{
 +  char* pos = args + 1;
@@ -228,17 +209,28 @@
 +  }
 +  command = g_strndup(args, pos - args);
 +  compl_add_category_word(COMPL_SPELL, command);
++  if (!spellcheckable_commands) {
++    spellcheckable_commands = g_hash_table_new_full(
++      g_str_hash,
++      g_str_equal,
++      g_free,
++      g_free);
++  }
 +  g_hash_table_insert(spellcheckable_commands, command, skip_args);
 +}
 +
 +void spellcheck_disable(char* args)
 +{
 +  compl_del_category_word(COMPL_SPELL, args);
-+  g_hash_table_remove(spellcheckable_commands, args);
- }
-
++  if (spellcheckable_commands) {
++      g_hash_table_remove(spellcheckable_commands, args);
++  }
++}
++
  typedef struct {
-@@ -4595,13 +4637,45 @@
+   const char* str;
+   int len;
+@@ -4595,13 +4636,49 @@
  // Spell checking function
  static void spellcheck(char *line, char *checked)
  {
@@ -259,9 +251,13 @@
 +    while (*line && !strchr(" \t\r\n", *line)) {
 +      line = next_char(line);
 +    }
-+    command = g_strndup(line_start + 1, line - line_start - 1);
-+    config = g_hash_table_lookup(spellcheckable_commands, command);
-+    g_free(command);
++    if (spellcheckable_commands) {
++        command = g_strndup(line_start + 1, line - line_start - 1);
++        config = g_hash_table_lookup(spellcheckable_commands, command);
++        g_free(command);
++    } else {
++        config = NULL;
++    }
 +    if (config) {
 +      skip_args = *(size_t*) config;
 +      // Skip command flags and skip_args arguments
