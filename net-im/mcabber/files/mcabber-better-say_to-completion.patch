@@ -1,0 +1,11 @@
+--- a/mcabber/mcabber/commands.c
++++ b/mcabber/mcabber/commands.c
+@@ -225,7 +225,7 @@
+   cmd_add("roster", "Manipulate the roster/buddylist", COMPL_ROSTER, 0,
+           &do_roster, NULL);
+   cmd_add("say", "Say something to the selected buddy", 0, 0, &do_say, NULL);
+-  cmd_add("say_to", "Say something to a specific buddy", COMPL_JID, 0,
++  cmd_add("say_to", "Say something to a specific buddy", COMPL_JID, COMPL_JID,
+           &do_say_to, NULL);
+   cmd_add("screen_refresh", "Redraw mcabber screen", 0, 0, &do_screen_refresh,
+           NULL);

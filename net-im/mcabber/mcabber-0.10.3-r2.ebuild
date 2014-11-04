@@ -41,6 +41,8 @@ DOCS=( AUTHORS ChangeLog NEWS README TODO mcabberrc.example doc/README_PGP.txt )
 PATCHES=(
 	"${FILESDIR}/${P}-vim-ftdetect.patch"
 	"${FILESDIR}/mcabber-multilang-spellcheck.patch"
+	"${FILESDIR}/mcabber-commands-spellcheck.patch"
+	"${FILESDIR}/mcabber-better-say_to-completion.patch"
 )
 
 pkg_setup() {
