@@ -1,0 +1,301 @@
+--- a/mcabber/doc/help/en/hlp.txt
++++ b/mcabber/doc/help/en/hlp.txt
+@@ -3,4 +3,4 @@
+
+ Display some help about a command or a topic.
+ If no argument provided a usage of this command is printed.
+-Available commands: add, alias, authorization, bind, buffer, carbons, chat_disable, clear, color, connect, del, disconnect, echo, event, group, help, iline, info, module, move, msay, otr, otrpolicy, pgp, quit, rawxml, rename, request, room, roster, say_to, say, screen_refresh, set, source, status_to, status, version.
++Available commands: add, alias, authorization, bind, buffer, carbons, chat_disable, clear, color, connect, del, disconnect, echo, event, group, help, iline, info, module, move, msay, otr, otrpolicy, pgp, quit, rawxml, rename, request, room, roster, say_to, say, screen_refresh, set, source, spellcheck_disable, spellcheck_enable, status_to, status, version.
+--- a/mcabber/doc/help/en/hlp_spellcheck_disable.txt
++++ b/mcabber/doc/help/en/hlp_spellcheck_disable.txt
+@@ -0,0 +1,4 @@
++
++ /SPELLCHECK_ENABLE command [N]
++
++Disable spell checking for the specified command arguments.
+--- a/mcabber/doc/help/en/hlp_spellcheck_enable.txt
++++ b/mcabber/doc/help/en/hlp_spellcheck_enable.txt
+@@ -0,0 +1,6 @@
++
++ /SPELLCHECK_ENABLE command [N]
++
++Enable spell checking for the specified command arguments.
++Command flags and first N words in the line will be ignored by spell checker.
++For example /say_to command has N set to 1, so in the line "/say_to -e buddy@example.com hello" first spell checked word will be "hello".
+--- a/mcabber/doc/help/ru/hlp.txt
++++ b/mcabber/doc/help/ru/hlp.txt
+@@ -3,4 +3,4 @@
+
+ Отображает файл помощи о запрошенной команде или топике.
+ Если выполнить без аргументов, будут отображены допустимые команды.
+-Допустимые команды: add, alias, authorization, bind, buffer, carbons, chat_disable, clear, color, connect, del, disconnect, echo, event, group, help, iline, info, module, move, msay, otr, otrpolicy, pgp, quit, rawxml, rename, request, room, roster, say_to, say, screen_refresh, set, source, status_to, status, version.
++Допустимые команды: add, alias, authorization, bind, buffer, carbons, chat_disable, clear, color, connect, del, disconnect, echo, event, group, help, iline, info, module, move, msay, otr, otrpolicy, pgp, quit, rawxml, rename, request, room, roster, say_to, say, screen_refresh, set, source, spellcheck_disable, spellcheck_enable, status_to, status, version.
+--- a/mcabber/doc/help/ru/hlp_spellcheck_disable.txt
++++ b/mcabber/doc/help/ru/hlp_spellcheck_disable.txt
+@@ -0,0 +1,4 @@
++
++ /SPELLCHECK_DISABLE command [N]
++
++Отключает проверку правописания для аргументов указанной команды.
+--- a/mcabber/doc/help/ru/hlp_spellcheck_enable.txt
++++ b/mcabber/doc/help/ru/hlp_spellcheck_enable.txt
+@@ -0,0 +1,6 @@
++
++ /SPELLCHECK_ENABLE command [N]
++
++Включает проверку правописания для аргументов указанной команды.
++Флаги переданные команде и первые N слов будут проигнорированы при проверке правописания.
++Например, команда /say_to имеет N равное 1, таким образом в строке "/say_to -e buddy@example.com привет" первым проверенным словом будет "привет".
+--- a/mcabber/doc/mcabber.1
++++ b/mcabber/doc/mcabber.1
+@@ -1353,6 +1353,20 @@
+ Read configuration files, that match glob pattern (sorted in alphabetical order)\&.
+ .RE
+ .PP
++/spellcheck_disable command
++.RS 4
++Disable spell checking for the specified command arguments\&.
++.RE
++.PP
++/spellcheck_enable command [N]
++.RS 4
++Enable spell checking for the specified command arguments\&.
++
++Command flags and first N words in the line will be ignored by spell checker\&.
++
++For example /say_to command has N set to 1, so in the line "/say_to -e buddy@example.com hello" first spell checked word will be "hello"\&.
++.RE
++.PP
+ /status [online|avail|free|dnd|notavail|away [\-|statusmessage]], /status message \-|statusmessage
+ .RS 4
+ Show or set the current status\&.
+--- a/mcabber/doc/mcabber.1.html
++++ b/mcabber/doc/mcabber.1.html
+@@ -2535,6 +2535,24 @@
+ </p>
+ </dd>
+ <dt class="hdlist1">
++/spellcheck_disable command
++</dt>
++<dd>
++<p>
++        Disable spell checking for the specified command arguments.
++</p>
++</dd>
++<dt class="hdlist1">
++/spellcheck_enable command [N]
++</dt>
++<dd>
++<p>
++        Enable spell checking for the specified command arguments.
++        Command flags and first N words in the line will be ignored by spell checker.
++        For example /say_to command has N set to 1, so in the line "/say_to -e buddy@example.com hello" first spell checked word will be "hello".
++</p>
++</dd>
++<dt class="hdlist1">
+ /status [online|avail|free|dnd|notavail|away [-|statusmessage]]
+ </dt>
+ <dt class="hdlist1">
+--- a/mcabber/doc/mcabber.1.txt
++++ b/mcabber/doc/mcabber.1.txt
+@@ -492,6 +492,14 @@
+ /source pattern::
+         Read configuration files, that match glob pattern (sorted in alphabetical order).
+
++/spellcheck_disable command::
++        Disable spell checking for the specified command arguments.
++
++/spellcheck_enable command [N]::
++        Enable spell checking for the specified command arguments. +
++        Command flags and first N words in the line will be ignored by spell checker. +
++        For example /say_to command has N set to 1, so in the line "/say_to -e buddy@example.com hello" first spell checked word will be "hello".
++
+ /status [online|avail|free|dnd|notavail|away [-|statusmessage]]::
+ /status message -|statusmessage::
+         Show or set the current status. +
+--- a/mcabber/mcabber/commands.c
++++ b/mcabber/mcabber/commands.c
+@@ -237,6 +237,13 @@
+           COMPL_JID, COMPL_STATUS, &do_status_to, NULL);
+   cmd_add("version", "Show mcabber version", 0, 0, &do_version, NULL);
+
++#if defined(WITH_ENCHANT) || defined(WITH_ASPELL)
++  cmd_add("spellcheck_enable", "Enable spell checking for command arguments",
++      COMPL_CMD, 0, spellcheck_enable, NULL);
++  cmd_add("spellcheck_disable", "Disable spell checking for command arguments",
++      COMPL_SPELL, 0, spellcheck_disable, NULL);
++#endif
++
+   cmd_set_safe("set", TRUE);
+   cmd_set_safe("bind", TRUE);
+   cmd_set_safe("alias", TRUE);
+@@ -246,6 +253,7 @@
+   cmd_set_safe("color", TRUE);
+   cmd_set_safe("otrpolicy", TRUE);
+   cmd_set_safe("module", TRUE);
++  cmd_set_safe("spellcheck_enable", TRUE);
+
+   // Status category
+   compl_add_category_word(COMPL_STATUS, "online");
+--- a/mcabber/mcabber/compl.c
++++ b/mcabber/mcabber/compl.c
+@@ -135,6 +135,9 @@
+   register_builtin_cat(COMPL_OTRPOLICY, NULL);
+   register_builtin_cat(COMPL_MODULE, NULL);
+   register_builtin_cat(COMPL_CARBONS, NULL);
++#if defined(WITH_ENCHANT) || defined(WITH_ASPELL)
++  register_builtin_cat(COMPL_SPELL, NULL);
++#endif
+ }
+
+ #ifdef MODULES_ENABLE
+diff -d -u -r a/mcabber/mcabber/compl.h b/mcabber/mcabber/compl.h
+--- a/mcabber/mcabber/compl.h	2015-06-28 23:32:38.000000000 +0300
++++ b/mcabber/mcabber/compl.h	2015-07-05 14:06:54.150409140 +0300
+@@ -28,8 +28,14 @@
+ #define COMPL_OTRPOLICY   21
+ #define COMPL_MODULE      22
+ #define COMPL_CARBONS     23
++
++#if defined(WITH_ENCHANT) || defined(WITH_ASPELL)
++#define COMPL_SPELL       24
+ /* private */
++#define COMPL_MAX_ID      24
++#else
+ #define COMPL_MAX_ID      23
++#endif
+
+ void compl_init_system(void); /* private */
+
+--- a/mcabber/mcabber/screen.c
++++ b/mcabber/mcabber/screen.c
+@@ -199,6 +199,8 @@
+ } spell_checker;
+
+ GSList* spell_checkers = NULL;
++
++GHashTable* spellcheckable_commands = NULL;
+ #endif
+
+ typedef struct {
+@@ -4565,6 +4567,12 @@
+     }
+   }
+   g_strfreev(langs);
++
++  // Enable spellcheck for some commands
++  spellcheck_enable("say");
++  spellcheck_enable("say_to 1");
++  spellcheck_enable("status 1");
++  spellcheck_enable("status_to 2");
+ }
+
+ // Deinitialization of spellchecker
+@@ -4574,6 +4582,39 @@
+   spell_checkers = NULL;
+ }
+
++void spellcheck_enable(char* args)
++{
++  char* pos = args + 1;
++  size_t* skip_args = g_new(size_t, 1);
++  gchar* command;
++  while (*pos && !strchr(" \t\r\n", *pos)) {
++    pos = next_char(pos);
++  }
++  if (*pos) {
++    *skip_args = strtol(pos + 1, NULL, 10);
++  } else {
++    *skip_args = 0;
++  }
++  command = g_strndup(args, pos - args);
++  compl_add_category_word(COMPL_SPELL, command);
++  if (!spellcheckable_commands) {
++    spellcheckable_commands = g_hash_table_new_full(
++      g_str_hash,
++      g_str_equal,
++      g_free,
++      g_free);
++  }
++  g_hash_table_insert(spellcheckable_commands, command, skip_args);
++}
++
++void spellcheck_disable(char* args)
++{
++  compl_del_category_word(COMPL_SPELL, args);
++  if (spellcheckable_commands) {
++      g_hash_table_remove(spellcheckable_commands, args);
++  }
++}
++
+ typedef struct {
+   const char* str;
+   int len;
+@@ -4599,17 +4640,53 @@
+ // Spell checking function
+ static void spellcheck(char *line, char *checked)
+ {
+-  const char *start, *line_start;
++  const char *start, *line_start = line;
++  gchar* command;
++  gpointer config;
+   spell_substring substr;
++  size_t skip_args;
+
+-  if (inputLine[0] == 0 || inputLine[0] == COMMAND_CHAR)
++  if (!*line)
+     return;
+
+   // Give up early if not languages are loaded
+   if (!spell_checkers)
+     return;
+
+-  line_start = line;
++  if (*line == COMMAND_CHAR) {
++    while (*line && !strchr(" \t\r\n", *line)) {
++      line = next_char(line);
++    }
++    if (spellcheckable_commands) {
++      command = g_strndup(line_start + 1, line - line_start - 1);
++      config = g_hash_table_lookup(spellcheckable_commands, command);
++      g_free(command);
++    } else {
++      config = NULL;
++    }
++    if (config) {
++      skip_args = *(size_t*) config;
++      // Skip command flags and skip_args arguments
++      while (*line) {
++        if (*line == '-') {
++          while (*line && !strchr(" \t\r\n", *line)) {
++            line = next_char(line);
++          }
++        } else if (strchr(" \t\r\n", *line)) {
++          line = next_char(line);
++        } else if (skip_args) {
++          while (*line && !strchr(" \t\r\n", *line)) {
++            line = next_char(line);
++          }
++          --skip_args;
++        } else {
++          break;
++        }
++      }
++    } else {
++      return;
++    }
++  }
+
+   while (*line) {
+
+--- a/mcabber/mcabber/screen.h
++++ b/mcabber/mcabber/screen.h
+@@ -19,6 +19,8 @@
+ #if defined(WITH_ENCHANT) || defined(WITH_ASPELL)
+ void spellcheck_init(void);
+ void spellcheck_deinit(void);
++void spellcheck_enable(char* args);
++void spellcheck_disable(char* args);
+ //static void spellcheck(char*, char*);
+ #endif
+
