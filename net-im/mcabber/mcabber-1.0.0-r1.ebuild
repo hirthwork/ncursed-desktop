@@ -41,7 +41,8 @@ DOCS=( AUTHORS ChangeLog NEWS README TODO mcabberrc.example doc/README_PGP.txt )
 PATCHES=(
 	"${FILESDIR}/${PN}-0.10.3-vim-ftdetect.patch"
 	"${FILESDIR}/${P}-commands-spellcheck.patch"
-	"${FILESDIR}/mcabber-better-say_to-completion.patch"
+	"${FILESDIR}/${P}-better-say_to-completion.patch"
+	"${FILESDIR}/${P}-ignore-duplicate-subscriptions.patch"
 )
 
 pkg_setup() {

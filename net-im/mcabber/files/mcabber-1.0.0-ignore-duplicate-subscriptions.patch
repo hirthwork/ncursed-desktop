@@ -1,0 +1,62 @@
+--- a/mcabber/xmpp.c
++++ b/mcabber/xmpp.c
+@@ -1539,6 +1539,7 @@
+   char *r;
+   char *buf;
+   int newbuddy;
++  guint subscription;
+   guint hook_result;
+   LmMessageSubType mstype = lm_message_get_sub_type(m);
+   const char *from = lm_message_get_from(m);
+@@ -1557,13 +1558,14 @@
+   r = jidtodisp(from);
+
+   newbuddy = !roster_find(r, jidsearch, 0);
++  subscription = roster_getsubscription(r);
+
+   hook_result = hk_subscription(mstype, r, msg);
+
+   if (mstype == LM_MESSAGE_SUB_TYPE_SUBSCRIBE) {
+     /* The sender wishes to subscribe to our presence */
+
+-    if (hook_result) {
++    if (hook_result || (subscription & sub_from)) {
+       g_free(r);
+       return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+     }
+@@ -1600,6 +1602,11 @@
+     scr_LogPrint(LPRINT_LOGNORM, "%s", buf);
+     g_free(buf);
+   } else if (mstype == LM_MESSAGE_SUB_TYPE_UNSUBSCRIBE) {
++    if (!(subscription & sub_from)) {
++      g_free(r);
++      return LM_HANDLER_RESULT_REMOVE_MESSAGE;
++    }
++
+     /* The sender is unsubscribing from our presence */
+     xmpp_send_s10n(from, LM_MESSAGE_SUB_TYPE_UNSUBSCRIBED);
+     buf = g_strdup_printf("<%s> is unsubscribing from your "
+@@ -1608,6 +1615,11 @@
+     scr_LogPrint(LPRINT_LOGNORM, "%s", buf);
+     g_free(buf);
+   } else if (mstype == LM_MESSAGE_SUB_TYPE_SUBSCRIBED) {
++    if (subscription & sub_to) {
++      g_free(r);
++      return LM_HANDLER_RESULT_REMOVE_MESSAGE;
++    }
++
+     /* The sender has allowed us to receive their presence */
+     buf = g_strdup_printf("<%s> has allowed you to receive their "
+                           "presence updates", from);
+@@ -1615,6 +1627,11 @@
+     scr_LogPrint(LPRINT_LOGNORM, "%s", buf);
+     g_free(buf);
+   } else if (mstype == LM_MESSAGE_SUB_TYPE_UNSUBSCRIBED) {
++    if (!(subscription & sub_to)) {
++      g_free(r);
++      return LM_HANDLER_RESULT_REMOVE_MESSAGE;
++    }
++
+     /* The subscription request has been denied or a previously-granted
+        subscription has been cancelled */
+     roster_unsubscribed(from);
