@@ -1,18 +1,28 @@
 --- a/mcabber/xmpp.c
 +++ b/mcabber/xmpp.c
-@@ -1539,6 +1539,7 @@
+@@ -1538,7 +1538,9 @@
+ {
    char *r;
    char *buf;
++  GSList* roster_node;
    int newbuddy;
 +  guint subscription;
    guint hook_result;
    LmMessageSubType mstype = lm_message_get_sub_type(m);
    const char *from = lm_message_get_from(m);
-@@ -1557,16 +1558,15 @@
+@@ -1556,17 +1558,22 @@
+   }
    r = jidtodisp(from);
 
-   newbuddy = !roster_find(r, jidsearch, 0);
-+  subscription = roster_getsubscription(r);
+-  newbuddy = !roster_find(r, jidsearch, 0);
++  roster_node = roster_find(r, jidsearch, 0);
++  if (roster_node) {
++    newbuddy = 0;
++    subscription = buddy_getsubscription(roster_node->data);
++  } else {
++    newbuddy = 1;
++    subscription = 0;
++  }
 
    hook_result = hk_subscription(mstype, r, msg);
 
@@ -28,7 +38,7 @@
 
      buf = g_strdup_printf("<%s> wants to subscribe to your presence updates",
                            from);
-@@ -1602,6 +1602,8 @@
+@@ -1602,6 +1609,8 @@
    } else if (mstype == LM_MESSAGE_SUB_TYPE_UNSUBSCRIBE) {
      /* The sender is unsubscribing from our presence */
      xmpp_send_s10n(from, LM_MESSAGE_SUB_TYPE_UNSUBSCRIBED);
@@ -37,7 +47,7 @@
      buf = g_strdup_printf("<%s> is unsubscribing from your "
                            "presence updates", from);
      scr_WriteIncomingMessage(r, buf, 0, HBB_PREFIX_INFO, 0);
-@@ -1609,6 +1611,8 @@
+@@ -1609,6 +1618,8 @@
      g_free(buf);
    } else if (mstype == LM_MESSAGE_SUB_TYPE_SUBSCRIBED) {
      /* The sender has allowed us to receive their presence */
@@ -46,7 +56,7 @@
      buf = g_strdup_printf("<%s> has allowed you to receive their "
                            "presence updates", from);
      scr_WriteIncomingMessage(r, buf, 0, HBB_PREFIX_INFO, 0);
-@@ -1619,6 +1623,8 @@
+@@ -1619,6 +1630,8 @@
         subscription has been cancelled */
      roster_unsubscribed(from);
      update_roster = TRUE;
@@ -55,7 +65,7 @@
      buf = g_strdup_printf("<%s> has cancelled your subscription to "
                            "their presence updates", from);
      scr_WriteIncomingMessage(r, buf, 0, HBB_PREFIX_INFO, 0);
-@@ -1631,6 +1637,8 @@
+@@ -1631,6 +1644,8 @@
 
    if (newbuddy)
      update_roster = TRUE;
