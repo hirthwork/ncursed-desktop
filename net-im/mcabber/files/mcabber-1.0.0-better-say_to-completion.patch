@@ -1,5 +1,5 @@
---- a/mcabber/mcabber/commands.c
-+++ b/mcabber/mcabber/commands.c
+--- a/mcabber/commands.c
++++ b/mcabber/commands.c
 @@ -225,7 +225,7 @@
    cmd_add("roster", "Manipulate the roster/buddylist", COMPL_ROSTER, 0,
            &do_roster, NULL);

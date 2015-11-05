@@ -1,20 +1,20 @@
---- a/mcabber/doc/help/en/hlp.txt
-+++ b/mcabber/doc/help/en/hlp.txt
+--- a/doc/help/en/hlp.txt
++++ b/doc/help/en/hlp.txt
 @@ -3,4 +3,4 @@
 
  Display some help about a command or a topic.
  If no argument provided a usage of this command is printed.
 -Available commands: add, alias, authorization, bind, buffer, carbons, chat_disable, clear, color, connect, del, disconnect, echo, event, group, help, iline, info, module, move, msay, otr, otrpolicy, pgp, quit, rawxml, rename, request, room, roster, say_to, say, screen_refresh, set, source, status_to, status, version.
 +Available commands: add, alias, authorization, bind, buffer, carbons, chat_disable, clear, color, connect, del, disconnect, echo, event, group, help, iline, info, module, move, msay, otr, otrpolicy, pgp, quit, rawxml, rename, request, room, roster, say_to, say, screen_refresh, set, source, spellcheck_disable, spellcheck_enable, status_to, status, version.
---- a/mcabber/doc/help/en/hlp_spellcheck_disable.txt
-+++ b/mcabber/doc/help/en/hlp_spellcheck_disable.txt
+--- a/doc/help/en/hlp_spellcheck_disable.txt
++++ b/doc/help/en/hlp_spellcheck_disable.txt
 @@ -0,0 +1,4 @@
 +
 + /SPELLCHECK_ENABLE command [N]
 +
 +Disable spell checking for the specified command arguments.
---- a/mcabber/doc/help/en/hlp_spellcheck_enable.txt
-+++ b/mcabber/doc/help/en/hlp_spellcheck_enable.txt
+--- a/doc/help/en/hlp_spellcheck_enable.txt
++++ b/doc/help/en/hlp_spellcheck_enable.txt
 @@ -0,0 +1,6 @@
 +
 + /SPELLCHECK_ENABLE command [N]
@@ -22,23 +22,23 @@
 +Enable spell checking for the specified command arguments.
 +Command flags and first N words in the line will be ignored by spell checker.
 +For example /say_to command has N set to 1, so in the line "/say_to -e buddy@example.com hello" first spell checked word will be "hello".
---- a/mcabber/doc/help/ru/hlp.txt
-+++ b/mcabber/doc/help/ru/hlp.txt
+--- a/doc/help/ru/hlp.txt
++++ b/doc/help/ru/hlp.txt
 @@ -3,4 +3,4 @@
 
  Отображает файл помощи о запрошенной команде или топике.
  Если выполнить без аргументов, будут отображены допустимые команды.
 -Допустимые команды: add, alias, authorization, bind, buffer, carbons, chat_disable, clear, color, connect, del, disconnect, echo, event, group, help, iline, info, module, move, msay, otr, otrpolicy, pgp, quit, rawxml, rename, request, room, roster, say_to, say, screen_refresh, set, source, status_to, status, version.
 +Допустимые команды: add, alias, authorization, bind, buffer, carbons, chat_disable, clear, color, connect, del, disconnect, echo, event, group, help, iline, info, module, move, msay, otr, otrpolicy, pgp, quit, rawxml, rename, request, room, roster, say_to, say, screen_refresh, set, source, spellcheck_disable, spellcheck_enable, status_to, status, version.
---- a/mcabber/doc/help/ru/hlp_spellcheck_disable.txt
-+++ b/mcabber/doc/help/ru/hlp_spellcheck_disable.txt
+--- a/doc/help/ru/hlp_spellcheck_disable.txt
++++ b/doc/help/ru/hlp_spellcheck_disable.txt
 @@ -0,0 +1,4 @@
 +
 + /SPELLCHECK_DISABLE command [N]
 +
 +Отключает проверку правописания для аргументов указанной команды.
---- a/mcabber/doc/help/ru/hlp_spellcheck_enable.txt
-+++ b/mcabber/doc/help/ru/hlp_spellcheck_enable.txt
+--- a/doc/help/ru/hlp_spellcheck_enable.txt
++++ b/doc/help/ru/hlp_spellcheck_enable.txt
 @@ -0,0 +1,6 @@
 +
 + /SPELLCHECK_ENABLE command [N]
@@ -46,8 +46,8 @@
 +Включает проверку правописания для аргументов указанной команды.
 +Флаги переданные команде и первые N слов будут проигнорированы при проверке правописания.
 +Например, команда /say_to имеет N равное 1, таким образом в строке "/say_to -e buddy@example.com привет" первым проверенным словом будет "привет".
---- a/mcabber/doc/mcabber.1
-+++ b/mcabber/doc/mcabber.1
+--- a/doc/mcabber.1
++++ b/doc/mcabber.1
 @@ -1353,6 +1353,20 @@
  Read configuration files, that match glob pattern (sorted in alphabetical order)\&.
  .RE
@@ -69,8 +69,8 @@
  /status [online|avail|free|dnd|notavail|away [\-|statusmessage]], /status message \-|statusmessage
  .RS 4
  Show or set the current status\&.
---- a/mcabber/doc/mcabber.1.html
-+++ b/mcabber/doc/mcabber.1.html
+--- a/doc/mcabber.1.html
++++ b/doc/mcabber.1.html
 @@ -2535,6 +2535,24 @@
  </p>
  </dd>
@@ -96,8 +96,8 @@
  /status [online|avail|free|dnd|notavail|away [-|statusmessage]]
  </dt>
  <dt class="hdlist1">
---- a/mcabber/doc/mcabber.1.txt
-+++ b/mcabber/doc/mcabber.1.txt
+--- a/doc/mcabber.1.txt
++++ b/doc/mcabber.1.txt
 @@ -492,6 +492,14 @@
  /source pattern::
          Read configuration files, that match glob pattern (sorted in alphabetical order).
@@ -113,8 +113,8 @@
  /status [online|avail|free|dnd|notavail|away [-|statusmessage]]::
  /status message -|statusmessage::
          Show or set the current status. +
---- a/mcabber/mcabber/commands.c
-+++ b/mcabber/mcabber/commands.c
+--- a/mcabber/commands.c
++++ b/mcabber/commands.c
 @@ -237,6 +237,13 @@
            COMPL_JID, COMPL_STATUS, &do_status_to, NULL);
    cmd_add("version", "Show mcabber version", 0, 0, &do_version, NULL);
@@ -137,8 +137,8 @@
 
    // Status category
    compl_add_category_word(COMPL_STATUS, "online");
---- a/mcabber/mcabber/compl.c
-+++ b/mcabber/mcabber/compl.c
+--- a/mcabber/compl.c
++++ b/mcabber/compl.c
 @@ -135,6 +135,9 @@
    register_builtin_cat(COMPL_OTRPOLICY, NULL);
    register_builtin_cat(COMPL_MODULE, NULL);
@@ -149,9 +149,8 @@
  }
 
  #ifdef MODULES_ENABLE
-diff -d -u -r a/mcabber/mcabber/compl.h b/mcabber/mcabber/compl.h
---- a/mcabber/mcabber/compl.h	2015-06-28 23:32:38.000000000 +0300
-+++ b/mcabber/mcabber/compl.h	2015-07-05 14:06:54.150409140 +0300
+--- a/mcabber/compl.h
++++ b/mcabber/compl.h
 @@ -28,8 +28,14 @@
  #define COMPL_OTRPOLICY   21
  #define COMPL_MODULE      22
@@ -167,8 +166,8 @@ diff -d -u -r a/mcabber/mcabber/compl.h b/mcabber/mcabber/compl.h
 
  void compl_init_system(void); /* private */
 
---- a/mcabber/mcabber/screen.c
-+++ b/mcabber/mcabber/screen.c
+--- a/mcabber/screen.c
++++ b/mcabber/screen.c
 @@ -199,6 +199,8 @@
  } spell_checker;
 
@@ -288,8 +287,8 @@ diff -d -u -r a/mcabber/mcabber/compl.h b/mcabber/mcabber/compl.h
 
    while (*line) {
 
---- a/mcabber/mcabber/screen.h
-+++ b/mcabber/mcabber/screen.h
+--- a/mcabber/screen.h
++++ b/mcabber/screen.h
 @@ -19,6 +19,8 @@
  #if defined(WITH_ENCHANT) || defined(WITH_ASPELL)
  void spellcheck_init(void);

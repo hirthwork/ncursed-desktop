@@ -1,5 +1,5 @@
---- a/mcabber/contrib/vim/mcabber_log-ftdetect.vim
-+++ b/mcabber/contrib/vim/mcabber_log-ftdetect.vim
+--- a/contrib/vim/mcabber_log-ftdetect.vim
++++ b/contrib/vim/mcabber_log-ftdetect.vim
 @@ -1,7 +1,7 @@
  "
  " Save this file in your ~/.vim/ftdetect/ folder
