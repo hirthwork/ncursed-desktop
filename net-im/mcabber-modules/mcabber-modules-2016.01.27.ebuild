@@ -6,10 +6,10 @@ EAPI=3
 
 inherit eutils flag-o-matic autotools
 
-HASH="dcef1b8f2e05"
+HASH="18621bbdd2b2"
 DESCRIPTION="Modules for MCabber, jabber console client"
 HOMEPAGE="http://hg.lilotux.net/index.cgi/mcabber-modules"
-SRC_URI="http://hg.lilotux.net/index.cgi/${PN}/archive/${HASH}.tar.gz"
+SRC_URI="http://hg.lilotux.net/${PN}/archive/${HASH}.tar.gz"
 S="${PN}-${HASH}"
 
 LICENSE="GPL-3"
