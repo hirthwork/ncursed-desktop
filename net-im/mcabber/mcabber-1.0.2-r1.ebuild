@@ -1,6 +1,6 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-im/mcabber/mcabber-1.0.0.ebuild,v 1.1 2015/07/04 21:36:02 mrueg Exp $
+# $Id$
 
 EAPI=5
 
@@ -8,7 +8,11 @@ inherit flag-o-matic autotools-utils
 
 DESCRIPTION="A small Jabber console client with various features, like MUC, SSL, PGP"
 HOMEPAGE="http://mcabber.com/"
+#REV="a18e1b488f1c"
+#SRC_URI="http://mcabber.com/hg/index.cgi/archive/${REV}.tar.gz -> ${P}.tar.gz"
 SRC_URI="http://mcabber.com/files/${P}.tar.bz2"
+
+#S=${WORKDIR}/${PN}-${REV}/${PN}
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -29,7 +33,7 @@ RDEPEND="crypt? ( >=app-crypt/gpgme-1.0.0 )
 	idn? ( net-dns/libidn  )
 	spell? ( app-text/enchant )
 	dev-libs/glib:2
-	sys-libs/ncurses
+	sys-libs/ncurses:0=
 	>=net-libs/loudmouth-1.4.3-r1[ssl?]"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
