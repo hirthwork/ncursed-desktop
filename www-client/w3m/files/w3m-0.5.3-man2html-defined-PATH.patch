@@ -1,0 +1,11 @@
+--- a/scripts/w3mman/w3mman2html.cgi.in
++++ b/scripts/w3mman/w3mman2html.cgi.in
+@@ -220,7 +220,7 @@
+   local($p);
+
+   (! -d && -x) || return 0;
+-  if (! defined(%PATH)) {
++  if (! %PATH) {
+     for $p (split(":", $ENV{'PATH'})) {
+       $p =~ s@/+$@@;
+       $PATH{$p} = 1;
