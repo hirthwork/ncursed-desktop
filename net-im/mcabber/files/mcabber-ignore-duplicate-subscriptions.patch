@@ -1,6 +1,6 @@
 --- a/mcabber/xmpp.c
 +++ b/mcabber/xmpp.c
-@@ -1538,7 +1538,9 @@
+@@ -1621,7 +1621,9 @@
  {
    char *r;
    char *buf;
@@ -10,7 +10,7 @@
    guint hook_result;
    LmMessageSubType mstype = lm_message_get_sub_type(m);
    const char *from = lm_message_get_from(m);
-@@ -1556,17 +1558,22 @@
+@@ -1639,17 +1641,22 @@
    }
    r = jidtodisp(from);
 
@@ -38,7 +38,7 @@
 
      buf = g_strdup_printf("<%s> wants to subscribe to your presence updates",
                            from);
-@@ -1602,6 +1609,8 @@
+@@ -1685,6 +1692,8 @@
    } else if (mstype == LM_MESSAGE_SUB_TYPE_UNSUBSCRIBE) {
      /* The sender is unsubscribing from our presence */
      xmpp_send_s10n(from, LM_MESSAGE_SUB_TYPE_UNSUBSCRIBED);
@@ -47,7 +47,7 @@
      buf = g_strdup_printf("<%s> is unsubscribing from your "
                            "presence updates", from);
      scr_WriteIncomingMessage(r, buf, 0, HBB_PREFIX_INFO, 0);
-@@ -1609,6 +1618,8 @@
+@@ -1692,6 +1701,8 @@
      g_free(buf);
    } else if (mstype == LM_MESSAGE_SUB_TYPE_SUBSCRIBED) {
      /* The sender has allowed us to receive their presence */
@@ -56,19 +56,19 @@
      buf = g_strdup_printf("<%s> has allowed you to receive their "
                            "presence updates", from);
      scr_WriteIncomingMessage(r, buf, 0, HBB_PREFIX_INFO, 0);
-@@ -1619,6 +1630,8 @@
+@@ -1702,6 +1713,8 @@
         subscription has been cancelled */
      roster_unsubscribed(from);
-     update_roster = TRUE;
+     scr_update_roster();
 +    if (!(subscription & sub_to))
 +      goto handle_s10n_return;
      buf = g_strdup_printf("<%s> has cancelled your subscription to "
                            "their presence updates", from);
      scr_WriteIncomingMessage(r, buf, 0, HBB_PREFIX_INFO, 0);
-@@ -1631,6 +1644,8 @@
+@@ -1714,6 +1727,8 @@
 
    if (newbuddy)
-     update_roster = TRUE;
+     scr_update_roster();
 +
 +handle_s10n_return:
    g_free(r);
