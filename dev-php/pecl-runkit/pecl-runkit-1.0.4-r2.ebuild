@@ -6,7 +6,7 @@ EAPI=6
 
 PHP_EXT_NAME="runkit"
 
-USE_PHP="php5-6 php5-5"
+USE_PHP="php5-5 php5-6 php7-1"
 
 inherit php-ext-pecl-r3
 
